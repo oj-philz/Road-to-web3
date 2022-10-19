@@ -13,16 +13,13 @@ contract Titans is ERC721, ERC721Enumerable, ERC721URIStorage {
     uint256 MAX_SUPPLY = 10000;
     uint256 MAX_PER_ADDRESS = 5;
 
-    mapping (address => uint256) private _ownerNFTCount;
-
     constructor() ERC721("Titans", "TTN") {}
 
     function safeMint(address to, string memory uri) public {
         require(_tokenIdCounter.current() <= MAX_SUPPLY, "Im sorry, we reached the cap");
-        require(_ownerNFTCount[to] < MAX_PER_ADDRESS, "You already have up to five items");
+        require(balanceOf(to) < MAX_PER_ADDRESS, "You already have up to five items");
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _ownerNFTCount[to]++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
