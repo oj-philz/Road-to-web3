@@ -1,12 +1,16 @@
 require("@nomicfoundation/hardhat-toolbox");
-const { ALCHEMY_API_KEY : API_KEY, GOERLI_PRIVATE_KEY : PRIVATE_KEY } = require('../secret.json');
+require('dotenv').config()
+const GOERLI_URL = process.env.ALCHEMY_API_URL;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+console.log(GOERLI_URL);
+console.log(PRIVATE_KEY);
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.17",
   networks: {
     goerli: {
-      url: `https://eth-goerli.g.alchemy.com/v2/${API_KEY}`,
+      url: `${GOERLI_URL}`,
       accounts: [PRIVATE_KEY],
     },
   },
