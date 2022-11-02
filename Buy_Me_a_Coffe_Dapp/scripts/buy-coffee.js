@@ -34,7 +34,7 @@ async function main() {
   console.log("== start ==");
   await printBalances(addresses);
 
-  const tip = {value: hre.ethers.utils.parseEther("1")};
+  const tip = {value: hre.ethers.utils.parseEther("0.003")};
   await coffeeContract.connect(tipper).buyCoffee("Henry", "Awesome services!!", tip);
   await coffeeContract.connect(tipper).buyCoffee("Sasa", "Awesome services!!", tip);
   await coffeeContract.connect(tipper).buyCoffee("Chris", "Awesome services!!", tip);
@@ -42,7 +42,11 @@ async function main() {
   console.log("== bought coffee ==");
   await printBalances(addresses);
 
-  await coffeeContract.connect(owner).withdrawTips();
+  if (coffeeContract.balance !== "0.0") {
+    console.log("withdrawing funds..")
+    const withdrawTxn = await coffeeContract.withdrawTips();
+    await withdrawTxn.wait();
+  }
 
   console.log("== withdraw tips ==");
   await printBalances(addresses);
@@ -50,6 +54,10 @@ async function main() {
   console.log("== memos ==");
   const memos = await coffeeContract.getMemos();
   printMemos(memos);
+
+  console.log("==changing withdrawal address");
+  console.log(`Previous owner: ${owner.address}`);
+  await coffeeContract.connect(owner).updateAddress(tipper3.address);
 }
 
 main()
