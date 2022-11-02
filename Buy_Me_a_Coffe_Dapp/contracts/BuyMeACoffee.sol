@@ -3,6 +3,7 @@
 // contracts/BuyMeACoffee.sol
 pragma solidity ^0.8.0;
 
+import "hardhat/console.sol";
 // Switch this to your own contract address once deployed, for bookkeeping!
 // Example Contract Address on Goerli: 0xDBa03676a2fBb6711CB652beF5B7416A53c1421D
 
@@ -69,10 +70,35 @@ contract BuyMeACoffee {
         );
     }
 
+    function  buyLargeCoffee(string memory _name, string memory _message) public payable {
+      uint256 amount = 0.003 ether;
+      require(msg.value >= amount, "value must be equal to 0.003");
+      memos.push(Memo(
+          msg.sender,
+          block.timestamp,
+          _name,
+          _message
+      ));
+
+      // Emit a NewMemo event with details about the memo.
+      emit NewMemo(
+          msg.sender,
+          block.timestamp,
+          _name,
+          _message
+      );
+    }
+
     /**
      * @dev send the entire balance stored in this contract to the owner
      */
     function withdrawTips() public {
         require(owner.send(address(this).balance));
+    }
+
+    function updateAddress(address _withdrawAddress) public {
+      require(msg.sender == owner, "only owner can change address");
+      owner = payable(_withdrawAddress);
+      console.log(owner);
     }
 }
